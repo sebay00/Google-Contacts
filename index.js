@@ -3,7 +3,7 @@
  *
  * @see https://developers.google.com/google-apps/contacts/v3/reference#ContactsFeed
  *
- * To API test requests: 
+ * To API test requests:
  *
  * @see https://developers.google.com/oauthplayground/
  *
@@ -11,32 +11,33 @@
  *
  * @see http://jsonviewer.stack.hu/
  *
- * Note: The Contacts API has a hard limit to the number of results it can return at a 
- * time even if you explicitly request all possible results. If the requested feed has 
- * more fields than can be returned in a single response, the API truncates the feed and adds 
+ * Note: The Contacts API has a hard limit to the number of results it can return at a
+ * time even if you explicitly request all possible results. If the requested feed has
+ * more fields than can be returned in a single response, the API truncates the feed and adds
  * a "Next" link that allows you to request the rest of the response.
  */
-var EventEmitter = require('events').EventEmitter,
-  _ = require('underscore'),
-  qs = require('querystring'),
-  util = require('util'),
-  url = require('url'),
-  https = require('https'),
-  querystring = require('querystring');
+var EventEmitter = require("events").EventEmitter;
+var _            = require("underscore");
+var qs           = require("querystring");
+var util         = require("util");
+var url          = require("url");
+var https        = require("https");
+var querystring  = require("querystring");
 
 var GoogleContacts = function (opts) {
-  if (typeof opts === 'string') {
+  if (typeof opts === "string") {
     opts = { token: opts }
   }
+
   if (!opts) {
     opts = {};
   }
 
-  this.contacts = [];
-  this.consumerKey = opts.consumerKey ? opts.consumerKey : null;
-  this.consumerSecret = opts.consumerSecret ? opts.consumerSecret : null;
-  this.token = opts.token ? opts.token : null;
-  this.refreshToken = opts.refreshToken ? opts.refreshToken : null;
+  this.contacts       = [];
+  this.consumerKey    = opts.consumerKey;
+  this.consumerSecret = opts.consumerSecret;
+  this.token          = opts.token;
+  this.refreshToken   = opts.refreshToken;
 };
 
 GoogleContacts.prototype = {};
@@ -47,31 +48,31 @@ util.inherits(GoogleContacts, EventEmitter);
 GoogleContacts.prototype._get = function (params, cb) {
   var self = this;
 
-  if (typeof params === 'function') {
+  if (typeof params === "function") {
     cb = params;
     params = {};
   }
 
   var req = {
-    host: 'https://www.google.com',
+    host: "https://www.google.com",
     port: 443,
     path: this._buildPath(params),
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Authorization': 'OAuth ' + this.token 
+      "Authorization": "OAuth " + this.token
     }
   };
 
-  console.log(req);
 
   https.request(req, function (res) {
-    var data = '';
+    var data = "";
 
-    res.on('end', function () {
+    res.on("end", function () {
       if (res.statusCode < 200 || res.statusCode >= 300) {
-        var error = new Error('Bad client request status: ' + res.statusCode);
+        var error = new Error("Bad client request status: " + res.statusCode);
         return cb(error);
       }
+
       try {
         data = JSON.parse(data);
         cb(null, data);
@@ -81,25 +82,25 @@ GoogleContacts.prototype._get = function (params, cb) {
       }
     });
 
-    res.on('data', function (chunk) {
+    res.on("data", function (chunk) {
       //console.log(chunk.toString());
       data += chunk;
     });
 
-    res.on('error', function (err) {
+    res.on("error", function (err) {
       cb(err);
     });
 
-    //res.on('close', onFinish);
-  }).on('error', function (err) {
+    //res.on("close", onFinish);
+  }).on("error", function (err) {
     cb(err);
   }).end();
 };
 
-GoogleContacts.prototype.getContacts = function (cb, contacts) {
+GoogleContacts.prototype.getContacts = function (cb) {
   var self = this;
 
-  this._get({ type: 'contacts' }, receivedContacts);
+  this._get({ type: "contacts" }, receivedContacts);
   function receivedContacts(err, data) {
     if (err) return cb(err);
 
@@ -107,7 +108,7 @@ GoogleContacts.prototype.getContacts = function (cb, contacts) {
 
     var next = false;
     data.feed.link.forEach(function (link) {
-      if (link.rel === 'next') {
+      if (link.rel === "next") {
         next = true;
         var path = url.parse(link.href).path;
         self._get({ path: path }, receivedContacts);
@@ -116,7 +117,7 @@ GoogleContacts.prototype.getContacts = function (cb, contacts) {
     if (!next) {
       cb(null, self.contacts);
     }
-  };
+  }
 };
 
 GoogleContacts.prototype._saveContactsFromFeed = function (feed) {
@@ -124,8 +125,8 @@ GoogleContacts.prototype._saveContactsFromFeed = function (feed) {
   //console.log(feed);
   feed.entry.forEach(function (entry) {
     try {
-      var name = entry.title['$t'];
-      var email = entry['gd$email'][0].address; // only save first email
+      var name = entry.title["$t"];
+      var email = entry["gd$email"][0].address; // only save first email
       self.contacts.push({ name: name, email: email });
     }
     catch (e) {
@@ -134,67 +135,61 @@ GoogleContacts.prototype._saveContactsFromFeed = function (feed) {
   });
   console.log(self.contacts);
   console.log(self.contacts.length);
-}
+};
 
 GoogleContacts.prototype._buildPath = function (params) {
   if (params.path) return params.path;
 
-  params = params || {};
-  params.type = params.type || 'contacts';
-  params.alt = params.alt || 'json';
-  params.projection = params.projection || 'thin';
-  params.email = params.email || 'default';
-  params['max-results'] = params['max-results'] || 2000;
+  params                = params                || {};
+  params.type           = params.type           || "contacts";
+  params.alt            = params.alt            || "json";
+  params.projection     = params.projection     || "full";
+  params.email          = params.email          || "default";
+  params["max-results"] = params["max-results"] || 2000;
 
   var query = {
-    alt: params.alt,
-    'max-results': params['max-results']
+    "alt":          params.alt,
+    "max-results":  params["max-results"]
   };
 
-  var path = '/m8/feeds/';
-  path += params.type + '/';
-  path += params.email + '/'; 
-  path += params.projection;
-  path += '?' + qs.stringify(query);
+  var params  = ["type", "email", "projection"];
+  var path    = "/m8/feeds";
+
+  params.forEach(function(i) { path+= "/" + params[i]; });
+  path += "?" + qs.stringify(query);
 
   return path;
 };
 
 GoogleContacts.prototype.refreshAccessToken = function (refreshToken, cb) {
-  if (typeof params === 'function') {
+  if (typeof params === "function") {
     cb = params;
     params = {};
   }
 
-  var data = {
-    refresh_token: refreshToken,
-    client_id: this.consumerKey,
-    client_secret: this.consumerSecret,
-    grant_type: 'refresh_token'
-
-  }
-
-  var body = qs.stringify(data);
+  var data           = {};
+  data.refresh_token = refreshToken;
+  data.client_id     = this.consumerKey;
+  data.client_secret = this.consumerSecret;
+  data.grant_type    = "refresh_token";
+  var body           = qs.stringify(data);
 
   var opts = {
-    host: 'accounts.google.com',
+    host: "https://accounts.google.com",
     port: 443,
-    path: '/o/oauth2/token',
-    method: 'POST',
+    path: "/o/oauth2/token",
+    method: "POST",
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Content-Length': body.length
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Content-Length": body.length
     }
   };
 
-  //console.log(opts);
-  //console.log(data);
-
   var req = https.request(opts, function (res) {
-    var data = '';
-    res.on('end', function () {
+    var data = "";
+    res.on("end", function () {
       if (res.statusCode < 200 || res.statusCode >= 300) {
-        var error = new Error('Bad client request status: ' + res.statusCode);
+        var error = new Error("Bad client request status: " + res.statusCode);
         return cb(error);
       }
       try {
@@ -207,22 +202,22 @@ GoogleContacts.prototype.refreshAccessToken = function (refreshToken, cb) {
       }
     });
 
-    res.on('data', function (chunk) {
+    res.on("data", function (chunk) {
       //console.log(chunk.toString());
       data += chunk;
     });
 
-    res.on('error', function (err) {
+    res.on("error", function (err) {
       cb(err);
     });
 
-    //res.on('close', onFinish);
-  }).on('error', function (err) {
+    //res.on("close", onFinish);
+  }).on("error", function (err) {
     cb(err);
   });
 
   req.write(body);
   req.end();
-}
+};
 
 exports.GoogleContacts = GoogleContacts;
