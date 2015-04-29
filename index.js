@@ -53,7 +53,7 @@ GoogleContacts.prototype._get = function (params, cb) {
   }
 
   var opts = {
-    host: "google.com",
+    hostname: "google.com",
     port: 443,
     path: this._buildPath(params),
     method: "GET",
@@ -64,13 +64,14 @@ GoogleContacts.prototype._get = function (params, cb) {
 
   console.log("Req sent: ", opts);
 
-  https.get(opts, function (res) {
+  https.request(opts, function (res) {
     var data = "";
 
     res.on("end", function () {
       if (res.statusCode < 200 || res.statusCode >= 300) {
-        console.log("statusCode: ", res.statusCode);
-        console.log("headers: ", res.headers);
+        //console.log("statusCode: ", res.statusCode);
+        //console.log("headers: ", res.headers);
+        console.log("headers: ", res);
         var error = new Error("Bad client request status: " + res.statusCode);
         return cb(error);
       }
@@ -94,9 +95,11 @@ GoogleContacts.prototype._get = function (params, cb) {
     });
 
     //res.on("close", onFinish);
-  }).on("error", function (err) {
+  })
+    .on("error", function (err) {
     cb(err);
-  }).end();
+  })
+    .end();
 };
 
 GoogleContacts.prototype.getContacts = function (cb) {
