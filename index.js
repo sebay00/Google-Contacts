@@ -53,7 +53,7 @@ GoogleContacts.prototype._get = function (params, cb) {
   }
 
   var req = {
-    host: "https://www.google.com",
+    host: "www.google.com",
     port: 443,
     path: this._buildPath(params),
     method: "GET",
@@ -174,7 +174,7 @@ GoogleContacts.prototype.refreshAccessToken = function (refreshToken, cb) {
   var body           = qs.stringify(data);
 
   var opts = {
-    host: "https://accounts.google.com",
+    host: "accounts.google.com",
     port: 443,
     path: "/o/oauth2/token",
     method: "POST",
