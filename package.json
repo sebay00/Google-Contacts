@@ -22,8 +22,7 @@
   "author": "sebay00 <sebastien.britan@rednet.io>",
   "license": "MIT",
   "dependencies": {
-    "underscore": "^1.8.3",
-    "google-contacts": "^0.0.2"
+    "underscore": "^1.8.3"
   },
   "bugs": {
     "url": "https://github.com/sebay00/Google-Contacts/issues"
