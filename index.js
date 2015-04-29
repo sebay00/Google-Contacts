@@ -69,6 +69,8 @@ GoogleContacts.prototype._get = function (params, cb) {
 
     res.on("end", function () {
       if (res.statusCode < 200 || res.statusCode >= 300) {
+        console.log("statusCode: ", res.statusCode);
+        console.log("headers: ", res.headers);
         var error = new Error("Bad client request status: " + res.statusCode);
         return cb(error);
       }

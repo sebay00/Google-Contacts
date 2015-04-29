@@ -1,6 +1,6 @@
 {
   "name": "rednet-google-contacts",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "API wrapper for Google Contacts",
   "main": "index.js",
   "directories": {
