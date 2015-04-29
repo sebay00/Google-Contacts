@@ -22,7 +22,6 @@ var qs           = require("querystring");
 var util         = require("util");
 var url          = require("url");
 var https        = require("https");
-var querystring  = require("querystring");
 
 var GoogleContacts = function (opts) {
   if (typeof opts === "string") {

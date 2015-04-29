@@ -1,6 +1,6 @@
 {
-  "name": "google-contacts",
-  "version": "0.0.2",
+  "name": "rednet-google-contacts",
+  "version": "0.0.5",
   "description": "API wrapper for Google Contacts",
   "main": "index.js",
   "directories": {
@@ -11,16 +11,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/olalonde/Google-Contacts.git"
+    "url": "git@github.com:sebay00/Google-Contacts.git"
   },
   "keywords": [
     "google",
     "contacts",
-    "api"
+    "api",
+    "rednet"
   ],
+  "author": "sebay00 <sebastien.britan@rednet.io>",
+  "license": "MIT",
   "dependencies": {
-    "underscore": ""
+    "underscore": "^1.8.3",
+    "google-contacts": "^0.0.2"
   },
-  "author": "Ajnasz <ajnasz@ajnasz.hu>",
-  "license": "MIT"
+  "bugs": {
+    "url": "https://github.com/sebay00/Google-Contacts/issues"
+  },
+  "homepage": "https://github.com/sebay00/Google-Contacts",
+  "devDependencies": {}
 }
