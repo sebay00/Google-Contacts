@@ -53,7 +53,7 @@ GoogleContacts.prototype._get = function (params, cb) {
   }
 
   var req = {
-    host: "www.google.com",
+    host: "google.com",
     port: 443,
     path: this._buildPath(params),
     method: "GET",
@@ -151,10 +151,10 @@ GoogleContacts.prototype._buildPath = function (params) {
     "max-results":  params["max-results"]
   };
 
-  var params  = ["type", "email", "projection"];
+  var opts  = ["type", "email", "projection"];
   var path    = "/m8/feeds";
 
-  params.forEach(function(i) { path+= "/" + params[i]; });
+  opts.forEach(function(i) { path+= "/" + params[i]; });
   path += "?" + qs.stringify(query);
 
   return path;
