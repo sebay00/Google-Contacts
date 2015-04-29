@@ -53,7 +53,7 @@ GoogleContacts.prototype._get = function (params, cb) {
   }
 
   var req = {
-    host: 'www.google.com',
+    host: 'https://www.google.com',
     port: 443,
     path: this._buildPath(params),
     method: 'GET',
