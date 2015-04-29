@@ -2,7 +2,7 @@ Node.js wrapper for the Google Contacts API.
 
 # Install
 
-    npm install google-contacts
+    npm install rednet-google-contacts
 
 # Usage
 
